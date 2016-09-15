@@ -7,7 +7,7 @@ import string
 config = {'hosts': [(os.environ.get('AEROSPIKE_HOST', '127.0.01'), 3000)],
           'policies': { 'key': aerospike.POLICY_KEY_SEND }
 }
-wpolicy = {'gen': aerospike.POLICY_GEN_EQ}
+wpolicy = {'gen': aerospike.POLICY_GEN_EQ }
 mpolicy_create = { 'map_write_mode': aerospike.MAP_CREATE_ONLY }
 
 client = aerospike.client(config).connect()
@@ -22,7 +22,7 @@ def create_user(user):
 def simple_purchase(user, event, qty):
   (key, meta, record) = client.get(("test", "events", event))
   client.put( key, {'available': record['available'] - qty},
-              {}, wpolicy)
+              {}, meta, wpolicy)
   purchase = { "event": event, 'qty': qty }
   client.list_append(("test", "users", user), "purchased", purchase)
 
